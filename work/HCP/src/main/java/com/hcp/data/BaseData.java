@@ -1,14 +1,14 @@
 package com.hcp.data;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.hcp.proto.BaseDataProtos;
 
 public class BaseData {
 	Object mValue = null;
-	HashMap<Object, BaseData> mObject = null;
+	Map<Object, BaseData> mObject = null;
 	boolean mIsBaseObject = false;
 
 	public BaseData(Object value) throws Exception {
@@ -37,7 +37,7 @@ public class BaseData {
 
 	public BaseData createObject() {
 		mIsBaseObject = true;
-		mObject = new HashMap<Object, BaseData>();
+		mObject = new ConcurrentHashMap<Object, BaseData>();
 		return this;
 	}
 
@@ -50,12 +50,12 @@ public class BaseData {
 	public BaseData putObject(Object key, Object value) throws Exception {
 		if (mIsBaseObject == true && (key instanceof Integer || key instanceof String)) {
 			if (value instanceof BaseData) {
-				if(!(((BaseData)value).mIsBaseObject == false && ((BaseData)value).mValue == null))
+				if (!(((BaseData) value).mIsBaseObject == false && ((BaseData) value).mValue == null))
 					mObject.put(key, (BaseData) value);
 				else
 					mObject.remove(key);
 			} else {
-				if(value != null)
+				if (value != null)
 					mObject.put(key, new BaseData(value));
 				else
 					mObject.remove(key);
@@ -97,8 +97,9 @@ public class BaseData {
 			throw new Exception();
 		}
 	}
+
 	public BaseData setBaseValue(Object value) throws Exception {
-		if (mIsBaseObject == false &&(value instanceof Integer || value instanceof Float || value instanceof Double
+		if (mIsBaseObject == false && (value instanceof Integer || value instanceof Float || value instanceof Double
 				|| value instanceof String || value instanceof Boolean || value instanceof Long
 				|| value instanceof Short))
 			return this;
@@ -172,7 +173,7 @@ public class BaseData {
 	public static BaseData bytetoBaseData(BaseDataProtos.BaseData proBD) throws Exception {
 		BaseData bsData = null;
 		if (proBD.getMIsBaseObject() == false) {
-			if (proBD.getMValue()== null) {
+			if (proBD.getMValue() == null) {
 				bsData = new BaseData(null);
 			} else if (proBD.getMValue().getMType() == 0) {
 				bsData = new BaseData(null);
@@ -195,9 +196,9 @@ public class BaseData {
 			Iterator<BaseDataProtos.BaseData.ObjectType> it = proBD.getMObjectList().iterator();
 			while (it.hasNext()) {
 				BaseDataProtos.BaseData.ObjectType keyValue = it.next();
-				if (keyValue.getMKey().getMType() == 1 ) {
+				if (keyValue.getMKey().getMType() == 1) {
 					bsData.putObject(keyValue.getMKey().getBvInt(), bytetoBaseData(keyValue.getMValue()));
-				}else if( keyValue.getMKey().getMType() == 4 ) {
+				} else if (keyValue.getMKey().getMType() == 4) {
 					bsData.putObject(keyValue.getMKey().getBvString(), bytetoBaseData(keyValue.getMValue()));
 				}
 			}
