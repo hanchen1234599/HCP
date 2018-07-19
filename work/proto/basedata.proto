@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package proto;
+option java_package = "com.hcp.proto";
+option java_outer_classname = "BaseDataProtos";
+message BaseData{
+	bool mIsBaseObject = 1;
+	message BaseValue{
+		uint32 mType = 1; // 0 null, 1, int 2, float, 3, double, 4, string, 5, bool 6, long
+		oneof base_oneof {
+			int32 bvInt = 2;
+			float bvFloat = 3;
+			double bvDouble = 4;
+			string bvString = 5;
+			bool bvBool = 6;
+			int64 bvLong = 7;
+		}
+	};
+	BaseValue mValue = 2;
+	message ObjectType{
+		BaseValue mKey = 1;
+		BaseData mValue = 2;
+	}
+	repeated ObjectType mObject = 3;
+}; 
