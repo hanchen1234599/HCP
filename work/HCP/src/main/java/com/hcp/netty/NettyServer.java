@@ -23,10 +23,9 @@ public class NettyServer {
 					@Override
 					protected void initChannel(SocketChannel ch) throws Exception {
 						// TODO Auto-generated method stub
-						// ch.pipeline().addLast("niabaochuli", new TestNettyNianBao());
 						ch.pipeline().addLast("recv data decode", new NettyServerLengthFrameDecode());
-						ch.pipeline().addLast("data logic", new NettyServerLogic());
 						ch.pipeline().addLast("send data encode", new NettyServerLengthFrameEncode());
+						ch.pipeline().addLast("data logic", new NettyServerLogic());
 					}
 				});
 		ChannelFuture f = null;
