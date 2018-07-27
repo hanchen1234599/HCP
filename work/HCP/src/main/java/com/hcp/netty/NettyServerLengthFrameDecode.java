@@ -16,7 +16,7 @@ public class NettyServerLengthFrameDecode extends LengthFieldBasedFrameDecoder {
 		int len = frame.readInt();
 		byte[] bytes = new byte[len];
 		frame.readBytes(bytes, 0, len);
-		System.out.println(BaseData.bytetoBaseData(BaseDataProtos.BaseData.parseFrom(bytes)).toString());
+		//System.out.println(BaseData.bytetoBaseData(BaseDataProtos.BaseData.parseFrom(bytes)).toString());
 		return BaseData.bytetoBaseData(BaseDataProtos.BaseData.parseFrom(bytes));
 	}
 }
