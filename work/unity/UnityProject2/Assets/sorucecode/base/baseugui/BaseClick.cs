@@ -18,7 +18,7 @@ public class BaseClick : MonoBehaviour
     {
 
     }
-
+    int i = 0;
     public void OnClick()
     {
         //Debug.Log("click" + GetComponent<LoadCache>().getCurPath());
@@ -29,6 +29,11 @@ public class BaseClick : MonoBehaviour
         {
             Debug.Log("on passw success");
         }
-        BaseTest.send(new BaseData(null).createObject().putObject("regist", new BaseData(null).createObject().putObject("username", name).putObject("userpassword", passw)));
+        if(i == 0)
+            BaseTest.send(new BaseData(null).createObject().putObject("mK", new BaseData("login")).putObject("mV",new BaseData(null).createObject().putObject("username", name).putObject("userpassword", passw)));
+        else
+            BaseTest.send(new BaseData(null).createObject().putObject("mE", new BaseData("da")).putObject("mV", new BaseData(null).createObject().putObject("username", name).putObject("userpassword", passw)));
+        i++;
+        //BaseTest.send(new BaseData(null).createObject().putObject("regist", new BaseData(null).createObject().putObject("username", name).putObject("userpassword", passw)));
     }
 }

@@ -23,8 +23,7 @@ public class LoadCache : MonoBehaviour
     void Start () {
         path = getObjectPaht();
         BaseScript.putLoadObject(path, gameObject);
-        Debug.Log("object start" + path);
-	}
+    }
 
 	// Update is called once per frame
 	void Update () {
@@ -32,7 +31,6 @@ public class LoadCache : MonoBehaviour
 	}
 
     void OnDestroy() {
-        Debug.Log("object destory" + path);
         BaseScript.removeLoadObject(path);
     }
 }

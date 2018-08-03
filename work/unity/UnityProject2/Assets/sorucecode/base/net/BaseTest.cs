@@ -45,8 +45,8 @@ class RecvClass : TcpRecv
 {
     public void onRecv(BaseData bsd)
     {
-        Debug.Log("onRecv begin \n");
+        //Debug.Log("onRecv begin \n");
         Debug.Log(bsd.ToString());
-        Debug.Log("onRecv end \n");
+       // Debug.Log("onRecv end \n");
     }
 }
