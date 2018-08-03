@@ -31,8 +31,15 @@ dependencies {
 	
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:23.0'
-
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
+    // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+	compile group: 'com.zaxxer', name: 'HikariCP', version: '3.1.0'
+	// https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
+	testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.11'
+	// https://mvnrepository.com/artifact/org.luaj/luaj-jse
+	compile group: 'org.luaj', name: 'luaj-jse', version: '3.0.1'
 }
 
