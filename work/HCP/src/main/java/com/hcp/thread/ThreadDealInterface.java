@@ -1,6 +1,6 @@
 package com.hcp.thread;
 
-import com.hcp.data.Commond;
+import com.hcp.util.Commond;
 
 public interface ThreadDealInterface {
 	public void exec(Commond commond);

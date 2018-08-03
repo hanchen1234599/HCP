@@ -2,36 +2,44 @@ package com.hcp.thread;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.hcp.util.BaseData;
+
 public class AppThreadLogicManager {
 	private OnTimerThread mOnTimer = null; // 心跳线程
-	private ManagerThread mManager = null; // 管理线程
 	private ConcurrentHashMap<String, MysqlThread> mMysql = null;
-	private ConcurrentHashMap<String, LogicThread> mLogic= null; // 逻辑线程组
+	private ConcurrentHashMap<String, LogicThread> mLogic = null; // 逻辑线程组
+
+
 	public AppThreadLogicManager() {
-		mManager = new ManagerThread(this);
-		mOnTimer = new OnTimerThread(this);
 		mLogic = new ConcurrentHashMap<String, LogicThread>();
 		mMysql = new ConcurrentHashMap<String, MysqlThread>();
+		this.mLogic.put("manager", new LogicThread("manager", "./script/manager"));
+		mOnTimer = new OnTimerThread();
 	}
-	
-	public void addLogicThread(String name) {
-		mLogic.put(name, new LogicThread(this, name));
+
+	public void addLogicThread(String name, String script, String groupName) {
+		mLogic.put(name, new LogicThread(name, script));
+//		try {
+//			if (threadDesc.getObject(groupName) == null) {
+//				threadDesc.putObject(groupName, new BaseData(null));
+//				threadDesc.getObject(groupName).createObject();
+//			}
+//			threadDesc.getObject(groupName).putObject(name, new BaseData(1));
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
-	
+
 	public void addMysqlThread(String name) {
-		mMysql.put(name, new MysqlThread(this, name));
+		mMysql.put(name, new MysqlThread(name));
 	}
-	
+
 	public OnTimerThread getmOnTimer() {
 		return mOnTimer;
 	}
 
 	public MysqlThread getmMysqlThread(String name) {
 		return mMysql.get(name);
-	}
-
-	public ManagerThread getmManager() {
-		return mManager;
 	}
 
 	public ConcurrentHashMap<String, MysqlThread> getmMysql() {

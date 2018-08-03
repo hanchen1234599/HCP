@@ -1,9 +1,11 @@
 package com.hcp.netty;
 
-import com.hcp.data.BaseData;
-import com.hcp.data.Commond;
-import com.hcp.manager.ServerApp;
-import com.hcp.xml.XmlUtil;
+import com.hcp.app.ServerApp;
+import com.hcp.shunt.SessionContainer;
+import com.hcp.shunt.Shunt;
+import com.hcp.util.BaseData;
+import com.hcp.util.Commond;
+import com.hcp.util.XmlUtil;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -25,13 +27,9 @@ public class NettyServerLogic extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		System.out.println("client channelRead ");
 		BaseData bsd = (BaseData) msg;
-		//System.out.println(bsd);
-		//这里处理线程分配的问题
 		if(bsd.isObject() != true)
 			return;
-		if(bsd.getObject("regist") != null) {
-			ServerApp.getAppExecs().getmLogicThread("oper1").exec(new Commond("regist", bsd, ctx.channel()));
-		}
+		Shunt.getInstance().OnProto(ServerApp.getNet().getChannelSid(ctx.channel()), bsd);
 	}
 
 	@Override

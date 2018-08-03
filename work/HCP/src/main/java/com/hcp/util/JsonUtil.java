@@ -1,4 +1,4 @@
-package com.hcp.json;
+package com.hcp.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,8 +13,6 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-
-import com.hcp.data.BaseData;
 
 /**
  * version 1.0.1 JsonUtil 功能： 1.支持读取文件中的json文件 2。支持从Xml转换成json

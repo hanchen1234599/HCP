@@ -1,8 +1,11 @@
-package com.hcp.data;
+package com.hcp.util;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
 
 import com.hcp.proto.BaseDataProtos;
 
@@ -107,6 +110,82 @@ public class BaseData {
 			System.out.println("BaseData function setBaseValue, is object");
 			throw new Exception();
 		}
+	}
+
+	public LuaValue toLuaValue() {
+		if (this.mIsBaseObject == false) {
+			if (mValue == null) {
+				return LuaValue.NIL;
+			} else {
+				if (mValue instanceof Integer) {
+					return LuaValue.valueOf((int) mValue);
+				} else if (mValue instanceof Float) {
+					return LuaValue.valueOf((float) mValue);
+				} else if (mValue instanceof Double) {
+					return LuaValue.valueOf((double) mValue);
+				} else if (mValue instanceof String) {
+					return LuaValue.valueOf((String) mValue);
+				} else if (mValue instanceof Boolean) {
+					return LuaValue.valueOf((boolean) mValue);
+				} else if (mValue instanceof Long) {
+					return LuaValue.valueOf((long) mValue);
+				} else if (mValue instanceof Short) {
+					return LuaValue.valueOf((Short) mValue);
+				}
+			}
+		} else {
+			LuaValue table = new LuaTable();
+			for (Map.Entry<Object, BaseData> entry : mObject.entrySet()) {
+				BaseData value = entry.getValue();
+				Object key = entry.getKey();
+				if (key instanceof String) {
+					table.set((String) key, value.toLuaValue());
+				} else if (key instanceof Integer) {
+					table.set((int) key, value.toLuaValue());
+				} else
+					continue;
+			}
+			return table;
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unused")
+	public static BaseData parseFromLuaValue(LuaValue lv) throws Exception {
+		BaseData bsData = null;
+		if (lv.istable() == false) {
+			if (lv == null) {
+				bsData = new BaseData(null);
+			} else if (lv.isnil()) {
+				bsData = new BaseData(null);
+			} else if (lv.isstring()) {
+				bsData = new BaseData(lv.tojstring());
+			} else if (lv.isint()) {
+				bsData = new BaseData(lv.toint());
+			} else if (lv.islong()) {
+				bsData = new BaseData(lv.tolong());
+			} else if (false) {
+				bsData = new BaseData(null);
+			} else if (lv.isnumber()) {
+				bsData = new BaseData(lv.todouble());
+			} else if (lv.isboolean()) {
+				bsData = new BaseData(lv.toboolean());
+			}
+		} else {
+			bsData = new BaseData(null);
+			bsData.createObject();
+			LuaTable t = (LuaTable) lv;
+			LuaValue[] keys = t.keys();
+			for (int i = 0; i < keys.length; i++) {
+				LuaValue k = keys[i];
+				if (k.isint()) {
+					bsData.putObject(k.toint(), parseFromLuaValue(t.get(k)));
+				} else if (k.isstring()) {
+					bsData.putObject(k.tojstring(), parseFromLuaValue(t.get(k)));
+				}
+			}
+		}
+		return bsData;
 	}
 
 	public BaseDataProtos.BaseData toProtoBuf() throws Exception {

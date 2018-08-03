@@ -5,25 +5,25 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.hcp.data.Commond;
-import com.hcp.logicinterface.OnDbreadr;
-import com.hcp.oper.AccountManager;
-
-import io.netty.channel.Channel;
+import com.hcp.util.BaseData;
+import com.hcp.util.BaseLua;
+import com.hcp.util.Commond;
 
 public class LogicThread implements ThreadDealInterface {
-	private boolean mState = false;
 	private ExecutorService mExec = null;
 	private LogicThreadDeal mLogic = null;
 	private String mName = null;
-
-	public LogicThread(AppThreadLogicManager app, String name) {
-		this.mLogic = new LogicThreadDeal(app, this);
+	
+	public LogicThread(String name, String script) {
+		this.mLogic = new LogicThreadDeal(script, this);
 		this.mExec = Executors.newSingleThreadExecutor();
 		this.mName = name;
-		this.mState = true;
 	}
-
+	
+	public ExecutorService getExec() {
+		return this.mExec;
+	}
+	
 	public void exec(Commond commond) {
 		mLogic.addCommond(commond);
 		mExec.submit(mLogic);
@@ -32,37 +32,49 @@ public class LogicThread implements ThreadDealInterface {
 	public void addCommond(Commond commond) {
 		this.mLogic.addCommond(commond);
 	}
-
+	
+	public void callLuaFun(String funstr, BaseData bd, BaseData callData) {
+		this.mLogic.callLuaFun(funstr, bd, callData);
+	}
+	
 	public String getThreadName() {
 		return this.mName;
 	}
 }
 
 class LogicThreadDeal implements Callable<Integer> {
-	private AppThreadLogicManager mApp = null;//
 	private ThreadDealInterface mExec = null;
 	private ConcurrentLinkedQueue<Commond> mCommonds = new ConcurrentLinkedQueue<Commond>();// 这里存放命令列表
-
-	public LogicThreadDeal(AppThreadLogicManager app, ThreadDealInterface exec) {
-		this.mApp = app;
+	private BaseLua lua = null;
+	
+	public LogicThreadDeal(String script, ThreadDealInterface exec) {
 		this.mExec = exec;
+		this.lua = new BaseLua(script);
+		try {
+			this.lua.callNoReturn("scriptLoad", (long) -1, new BaseData(1));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void addCommond(Commond commond) {
 		mCommonds.add(commond);
 	}
-
+	
+	public void callLuaFun(String funstr, BaseData bd, BaseData callData) {
+		this.lua.callNoReturnWithData(funstr, bd, callData);
+	}
+	
 	@Override
 	public Integer call() throws Exception {
 		while (mCommonds.isEmpty() != true) {
-			Commond commond = mCommonds.poll();
-			if(commond.getmComKey().equals("regist")) {
-				AccountManager.OnProtocol(this.mExec, commond.getmComValue(), (Channel) commond.getmResponse(), null);	
-			}else if(commond.getmComKey().equals("db")) {
-				((OnDbreadr)(commond.getmData()[0])).OnDbReader(commond.getmComValue(), null, commond.getmData());
+			try {
+				Commond commond = mCommonds.poll();
+				this.lua.callNoReturn(commond.getFunStr(), commond.getmComKey(), commond.getmComValue());
+			} catch (Exception e) {
+				System.out.println(e);
 			}
 		}
-
 		return null;
 	}
 }

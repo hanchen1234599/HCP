@@ -1,4 +1,4 @@
-package com.hcp.xml;
+package com.hcp.util;
 
 import java.io.File;
 import java.util.HashMap;
@@ -9,8 +9,6 @@ import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-
-import com.hcp.data.BaseData;
 
 public class XmlUtil {
 	public static BaseData readByFile(String fileName) {
